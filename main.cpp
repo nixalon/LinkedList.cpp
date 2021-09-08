@@ -10,8 +10,6 @@ public:
     Node();
     // Single argument constructor
     explicit Node(T data);
-    // Two argument constructor
-    Node(T data, Node<T> *next);
     // Destructor
     ~Node();
 
@@ -21,7 +19,6 @@ public:
 
     Node<T> *getNext();
     void setNext(Node<T> *next);
-
 
 private:
     T data_;
@@ -36,12 +33,6 @@ Node<T>::Node(): data_(T()), next_(nullptr) {
 template<typename T>
 Node<T>::Node(T data) : data_(data), next_(nullptr){
     cout << "Single argument constructor. Data = " << data_ << endl;
-}
-
-template<typename T>
-Node<T>::Node(T data, Node<T> *next) : data_(data), next_(next){
-    cout << "Double argument constructor. Data = " << data_ << ", Next(address): " << next_ << endl;
-
 }
 
 template<typename T>
@@ -89,9 +80,21 @@ public:
     // ostream operator
     //friend ostream & operator <<(ostream &os, const LinkedList<T> &list);
 
-    // Methods like push, pop, and clear
-    // **** ADD THEM! *****
+    // Getters and setters
+    T getHead(){
+        return head_->getData();
+    }
 
+    T getTail(){
+        return tail_->getData();
+    }
+
+    int getSize(){
+        return size;
+    }
+
+    // Methods like push, pop, and clear
+    // print, peekAt
     void pushHead(T data){
         if(!head_){
             head_ = new Node<T>(data);
@@ -157,30 +160,6 @@ public:
         return tailData;
     }
 
-    // Getters and setters
-    // **** ADD THEM ****
-
-    T getHead(){
-        return head_->getData();
-    }
-
-    T getTail(){
-        return tail_->getData();
-    }
-
-    void setHead(T data){
-        head_->setData(data);
-        size++;
-    }
-
-    void setTail(T data){
-        tail_->setData();
-    }
-
-    int getSize(){
-        return size;
-    }
-
     void printList(){
         auto current_ = new Node<T>();
         cout << ": ";
@@ -200,6 +179,91 @@ public:
         }
         cout << endl;
     }
+
+    void peekAt(int index){
+        int i = 0;
+        if(index <= size-1) {
+            auto current_ = new Node<T>();
+            current_ = head_;
+            while (index != i) {
+                current_ = current_->getNext();
+                i++;
+            }
+            cout << "Data at index " << index << " = " << current_->getData() << endl;
+        }else{
+            cout << "nothing to peek at index(" << index << ")" << endl;
+        }
+    }
+
+    void pushAt(T data, int index){
+        int i = 0;
+        if(index==0){
+            pushHead(data);
+        }else {
+            i++;
+            if (index <= size - 1) {
+                auto current_ = new Node<T>();
+                current_ = head_;
+                while (i < index) {
+                    current_ = current_->getNext();
+                    i++;
+                }
+                auto insert_ = new Node<T>();
+                insert_->setNext(current_->getNext());
+                insert_->setData(data);
+                current_->setNext(insert_);
+                size++;
+
+            }else if(index == size){
+                pushTail(data);
+            }else{
+                cout << ">>> Index-point does not exist. list is only " << size << endl;
+            }
+        }
+    }
+
+    T popAt(int index){
+        T popData = T();
+
+        int i = 0;
+        if(index==0){
+            popHead();
+        }else {
+            i++;
+            if (index <= size - 1) {
+                auto current_ = new Node<T>();
+                current_ = head_;
+                while (i < index) {
+                    current_ = current_->getNext();
+                    i++;
+                }
+                popData = current_->getNext()->getData();
+                if(current_->getNext()->getNext() == nullptr){
+                    popTail();
+                }else{
+                    auto temp_ = new Node<T>;
+                    temp_->setNext(current_->getNext());
+                    current_->setNext(current_->getNext()->getNext());
+                    temp_->setNext(nullptr);
+                }
+                size--;
+            }else if(index == size-1){
+                popTail();
+            }else{
+                cout << ">>> Index-point does not exist. list is only " << size << endl;
+            }
+        }
+
+        return popData;
+    }
+
+    void clearList(){
+        while(head_){
+            popHead();
+        }
+        cout << "list cleared" << endl;
+    }
+
 
 private:
     Node<T> *head_;
@@ -244,32 +308,61 @@ ostream &operator<<(ostream &os, const LinkedList<T> &list) {
 */
 
 int main() {
-    /*auto currentNode1 = new Node<int>(110);
-    cout << currentNode1 << endl;
-    auto currentNode2 = new Node<int>(111, currentNode1);
-    delete currentNode1;
-    delete currentNode2;*/
 
-    //auto linkedList1 = new LinkedList<int>();
     LinkedList<int> linkedList1;
 
-    linkedList1.pushHead(10);
-    linkedList1.pushHead(12);
-    cout << "listsize: " << linkedList1.getSize() << endl;
-
-
-    cout << linkedList1.popHead() << endl;
-    cout << "listsize: " << linkedList1.getSize() << endl;
-    cout << linkedList1.popHead() << endl;
-    cout << "listsize: " << linkedList1.getSize() << endl;
-
-
-    linkedList1.pushTail(32);
-    linkedList1.pushTail(64);
-
-    cout << "Tail deleted with data : " << linkedList1.popTail() << endl;
+    cout << "# create list" << endl;
+    linkedList1.pushTail(3);
+    linkedList1.pushTail(4);
+    linkedList1.pushTail(5);
+    linkedList1.pushTail(6);
+    linkedList1.pushTail(7);
+    linkedList1.pushHead(2);
+    linkedList1.pushHead(1);
+    linkedList1.pushHead(0);
     cout << "listsize: " << linkedList1.getSize() << endl;
     linkedList1.printList();
 
+
+    cout << "# push at" << endl;
+    linkedList1.pushAt(100, 3);
+    cout << "listsize: " << linkedList1.getSize() << endl;
+    linkedList1.printList();
+
+    cout << "# pop at " << endl;
+    linkedList1.popAt(5);
+    cout << "listsize: " << linkedList1.getSize() << endl;
+    linkedList1.printList();
+
+    cout << "# pop head " << endl;
+    linkedList1.popHead();
+    cout << "listsize: " << linkedList1.getSize() << endl;
+    linkedList1.printList();
+
+    cout << "# pop tail " << endl;
+    linkedList1.popTail();
+    cout << "listsize: " << linkedList1.getSize() << endl;
+    linkedList1.printList();
+
+    cout << "# pop at (out of range) " << endl;
+    linkedList1.popAt(20);
+    cout << "listsize: " << linkedList1.getSize() << endl;
+    linkedList1.printList();
+
+    cout << "# peek at " << endl;
+    linkedList1.peekAt(4);
+    cout << "listsize: " << linkedList1.getSize() << endl;
+    linkedList1.printList();
+
+    cout << "# peek at (out of range)" << endl;
+    linkedList1.peekAt(20);
+    cout << "listsize: " << linkedList1.getSize() << endl;
+    linkedList1.printList();
+
+    cout << "# clear list" << endl;
+    cout << "listsize: " << linkedList1.getSize() << endl;
+    linkedList1.clearList();
+
+    cout << " F I N" << endl;
     return 0;
 }
