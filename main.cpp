@@ -67,7 +67,7 @@ public:
     // Default constructor
     LinkedList();
     // Copy constructor
-    //LinkedList(const LinkedList<T> &other);
+    LinkedList(const LinkedList<T> &other);
     // Destructor
     ~LinkedList();
 
@@ -257,11 +257,19 @@ public:
         return popData;
     }
 
+    void changeAt(T data, int index){
+        head_->setData(data);
+    }
+
     void clearList(){
         while(head_){
             popHead();
         }
         cout << "list cleared" << endl;
+    }
+
+    void setSize(int test){
+        size = test;
     }
 
 
@@ -276,9 +284,28 @@ LinkedList<T>::LinkedList() : head_(nullptr), tail_(nullptr), size(0) {
     cout <<"LinkedList created" << endl;
 }
 
-/*template<typename T>
-LinkedList<T>::LinkedList(const LinkedList<T> &other) {
-}*/
+template<typename T>
+LinkedList<T>::LinkedList(const LinkedList<T> &other) : head_(nullptr), tail_(nullptr), size(0) {
+    head_ = other.head_;
+    size = other.size;
+
+
+
+    if(head_){
+        auto current1_ = head_;
+        //auto current2_ = new Node<T>();
+        while(current1_->getNext()){
+            auto current2_ = current1_->getNext();
+            if(head_==current1_){
+                head_->setNext(current2_);
+            }else{
+                current1_->setNext(current2_);
+            }
+            current1_ = current1_->getNext();
+        }
+        tail_ = current1_;
+    }
+}
 
 template<typename T>
 LinkedList<T>::~LinkedList() {
@@ -311,6 +338,12 @@ int main() {
 
     LinkedList<int> linkedList1;
 
+    //LinkedList<int>(linkedList1) linkedList2;
+
+
+
+    //linkedList2 = linkedList1;
+
     cout << "# create list" << endl;
     linkedList1.pushTail(3);
     linkedList1.pushTail(4);
@@ -323,7 +356,26 @@ int main() {
     cout << "listsize: " << linkedList1.getSize() << endl;
     linkedList1.printList();
 
+// ----------------
+    cout << "#######" << endl;
+    auto linkedList2 =  new LinkedList<int>(linkedList1);
+    linkedList1.printList();
+    linkedList2->printList();
+    cout << "#######" << endl;
+    linkedList1.changeAt(69, 0);
 
+    linkedList1.printList();
+    linkedList2->printList();
+
+    cout << "#######" << endl;
+
+
+
+
+
+
+
+// ---------------
     cout << "# push at" << endl;
     linkedList1.pushAt(100, 3);
     cout << "listsize: " << linkedList1.getSize() << endl;
@@ -363,6 +415,6 @@ int main() {
     cout << "listsize: " << linkedList1.getSize() << endl;
     linkedList1.clearList();
 
-    cout << " F I N" << endl;
+
     return 0;
 }
