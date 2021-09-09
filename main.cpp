@@ -258,7 +258,7 @@ public:
     }
 
     void changeAt(T data, int index){
-        head_->setData(data);
+        head_->setData(data);               // byter endast head
     }
 
     void clearList(){
@@ -286,24 +286,17 @@ LinkedList<T>::LinkedList() : head_(nullptr), tail_(nullptr), size(0) {
 
 template<typename T>
 LinkedList<T>::LinkedList(const LinkedList<T> &other) : head_(nullptr), tail_(nullptr), size(0) {
-    head_ = other.head_;
-    size = other.size;
+    //size = other.size;
 
 
+    if(other.head_){
 
-    if(head_){
-        auto current1_ = head_;
-        //auto current2_ = new Node<T>();
-        while(current1_->getNext()){
-            auto current2_ = current1_->getNext();
-            if(head_==current1_){
-                head_->setNext(current2_);
-            }else{
-                current1_->setNext(current2_);
-            }
+        auto current1_ = other.head_;
+        while(current1_->getNext()) {
+            pushTail(current1_->getData());
             current1_ = current1_->getNext();
         }
-        tail_ = current1_;
+        pushTail(current1_->getData());
     }
 }
 
@@ -358,22 +351,19 @@ int main() {
 
 // ----------------
     cout << "#######" << endl;
-    auto linkedList2 =  new LinkedList<int>(linkedList1);
-    linkedList1.printList();
-    linkedList2->printList();
-    cout << "#######" << endl;
-    linkedList1.changeAt(69, 0);
+    auto linkedList2 = LinkedList<int>(linkedList1);
 
     linkedList1.printList();
-    linkedList2->printList();
+    linkedList2.printList();
+    linkedList2.changeAt(33, 0);
+    linkedList1.printList();
+    linkedList2.printList();
+
+
+
+
 
     cout << "#######" << endl;
-
-
-
-
-
-
 
 // ---------------
     cout << "# push at" << endl;
